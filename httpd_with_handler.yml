@@ -1,0 +1,23 @@
+---
+- name: Install httpd and configure web server
+  hosts: web_servers
+  become: true
+
+  tasks:
+    - name: Install httpd
+      yum:
+        name: httpd
+        state: present
+      notify: restart httpd
+
+    - name: Copy web page
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+      notify: restart httpd
+
+  handlers:
+    - name: restart httpd
+      systemd:
+        name: httpd
+        state: restarted
